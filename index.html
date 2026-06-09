@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ConvoStream-Bench — Latency Benchmarking | Built for GetVocal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #F4EFE6;
+            --bg-card: #FAF6EC;
+            --bg-elevated: #FFFFFF;
+            --bg-deep: #EDE7DA;
+            --ink: #1A1B3E;
+            --ink-soft: #2D2E55;
+            --muted: #6B6880;
+            --muted-soft: #9A97A8;
+            --coral: #E8826B;
+            --coral-soft: #F2A593;
+            --coral-bg: #FBE5DC;
+            --olive: #8B8F4E;
+            --olive-soft: #A5A968;
+            --olive-bg: #E8EAD2;
+            --amber: #C9941E;
+            --amber-bg: #F5E7C8;
+            --border: #E0D9C8;
+            --border-soft: #EDE7DA;
+            --shadow: 0 4px 20px rgba(26, 27, 62, 0.06);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            min-height: 100vh;
+        }
+
+        /* Nav */
+        .top-nav {
+            max-width: 1400px;
+            margin: 1.25rem auto 0;
+            padding: 0 1.5rem;
+        }
+
+        .nav-pill {
+            background: var(--bg-elevated);
+            border-radius: 100px;
+            padding: 0.85rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .brand-mark {
+            display: flex;
+            gap: 2px;
+            align-items: flex-end;
+            height: 22px;
+        }
+
+        .brand-bar {
+            width: 3px;
+            background: var(--ink);
+            border-radius: 2px;
+            animation: equalize 1.4s ease-in-out infinite;
+        }
+
+        .brand-bar:nth-child(1) { height: 60%; animation-delay: 0s; }
+        .brand-bar:nth-child(2) { height: 100%; animation-delay: 0.15s; }
+        .brand-bar:nth-child(3) { height: 75%; animation-delay: 0.3s; }
+        .brand-bar:nth-child(4) { height: 90%; animation-delay: 0.45s; }
+        .brand-bar:nth-child(5) { height: 50%; animation-delay: 0.6s; }
+
+        @keyframes equalize {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(0.5); }
+        }
+
+        .brand-name {
+            font-weight: 700;
+            font-size: 1.05rem;
+            letter-spacing: -0.02em;
+        }
+
+        .nav-meta {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            font-size: 0.875rem;
+            color: var(--ink-soft);
+            font-weight: 500;
+        }
+
+        .nav-cta {
+            background: var(--ink);
+            color: var(--bg-elevated);
+            padding: 0.55rem 1.2rem;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Hero */
+        .hero {
+            max-width: 1400px;
+            margin: 2.5rem auto 1.5rem;
+            padding: 0 1.5rem;
+        }
+
+        .hero-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--coral-bg);
+            color: var(--coral);
+            padding: 0.4rem 0.9rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .hero-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--coral);
+            border-radius: 50%;
+            animation: pulseDot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseDot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .hero h1 {
+            font-size: 2.75rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            margin-bottom: 0.75rem;
+            max-width: 800px;
+        }
+
+        .hero h1 em {
+            font-style: normal;
+            color: var(--coral);
+        }
+
+        .hero-sub {
+            font-size: 1.05rem;
+            color: var(--muted);
+            max-width: 640px;
+        }
+
+        /* Workspace */
+        .workspace {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem 3rem;
+            display: grid;
+            grid-template-columns: 1fr 360px;
+            gap: 1.25rem;
+        }
+
+        @media (max-width: 1100px) {
+            .workspace { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            overflow: hidden;
+        }
+
+        .card-elevated {
+            background: var(--bg-elevated);
+            box-shadow: var(--shadow);
+        }
+
+        .card-header {
+            padding: 1.1rem 1.4rem;
+            border-bottom: 1px solid var(--border-soft);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        .card-subtitle {
+            font-size: 0.7rem;
+            color: var(--muted-soft);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .card-body { padding: 1.4rem; }
+
+        /* Percentile cards */
+        .percentile-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.6rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .percentile-cell {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .percentile-cell::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 4px;
+            height: 100%;
+        }
+
+        .percentile-cell.p50::after { background: var(--olive); }
+        .percentile-cell.p90::after { background: var(--olive-soft); }
+        .percentile-cell.p95::after { background: var(--amber); }
+        .percentile-cell.p99::after { background: var(--coral); }
+
+        .percentile-label {
+            font-size: 0.65rem;
+            color: var(--muted-soft);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+            margin-bottom: 0.35rem;
+        }
+
+        .percentile-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            letter-spacing: -0.02em;
+        }
+
+        .percentile-unit {
+            font-size: 0.75rem;
+            color: var(--muted-soft);
+            font-weight: 500;
+            margin-left: 2px;
+        }
+
+        .percentile-delta {
+            font-size: 0.7rem;
+            margin-top: 0.25rem;
+            font-weight: 500;
+        }
+
+        .delta-good { color: var(--olive); }
+        .delta-warn { color: var(--amber); }
+        .delta-bad { color: var(--coral); }
+
+        /* Chart */
+        .chart-wrap {
+            padding: 1.4rem;
+            position: relative;
+        }
+
+        .chart-svg {
+            width: 100%;
+            height: 280px;
+            display: block;
+        }
+
+        .chart-legend {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            font-size: 0.75rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+        }
+
+        /* Control panel */
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .control-block {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .control-label {
+            font-size: 0.7rem;
+            color: var(--muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .control-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--ink);
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: var(--bg-deep);
+            border-radius: 100px;
+            outline: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--ink);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            background: var(--coral);
+            transform: scale(1.15);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            background: var(--ink);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        .workload-tabs {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .workload-tab {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 0.6rem;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--ink-soft);
+            transition: all 0.2s;
+        }
+
+        .workload-tab.active {
+            background: var(--ink);
+            border-color: var(--ink);
+            color: white;
+        }
+
+        .action-row {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 0.85rem;
+            border: 1px solid var(--border);
+            background: var(--bg-elevated);
+            color: var(--ink);
+            border-radius: 100px;
+            font-family: inherit;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+        }
+
+        .action-btn:hover { background: var(--bg-deep); }
+
+        .action-btn.primary {
+            background: var(--ink);
+            color: white;
+            border-color: var(--ink);
+        }
+
+        .action-btn.primary:hover { background: var(--coral); border-color: var(--coral); }
+
+        .action-btn.spike {
+            background: var(--coral-bg);
+            color: var(--coral);
+            border-color: var(--coral);
+        }
+
+        .action-btn.spike:hover {
+            background: var(--coral);
+            color: white;
+        }
+
+        /* Leaderboard */
+        .leader-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 0.85rem;
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .leader-row.winner {
+            border-color: var(--olive);
+            background: var(--olive-bg);
+        }
+
+        .leader-rank {
+            font-weight: 700;
+            font-size: 0.85rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--muted-soft);
+            width: 16px;
+            text-align: center;
+        }
+
+        .leader-row.winner .leader-rank {
+            color: var(--olive);
+        }
+
+        .leader-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.7rem;
+            color: white;
+        }
+
+        .leader-avatar.gpt { background: linear-gradient(135deg, #10A37F, #0D7C5F); }
+        .leader-avatar.claude { background: linear-gradient(135deg, #C9602A, #A04D1E); }
+        .leader-avatar.mistral { background: linear-gradient(135deg, #FF7000, #C95800); }
+        .leader-avatar.gemini { background: linear-gradient(135deg, #4285F4, #1F5BD0); }
+
+        .leader-info {
+            flex: 1;
+        }
+
+        .leader-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .leader-meta {
+            font-size: 0.65rem;
+            color: var(--muted-soft);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .leader-score {
+            font-size: 0.85rem;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Heatmap */
+        .heatmap {
+            display: grid;
+            grid-template-columns: 70px repeat(12, 1fr);
+            gap: 2px;
+            margin-top: 0.5rem;
+        }
+
+        .heat-row-label {
+            font-size: 0.65rem;
+            color: var(--muted);
+            font-weight: 500;
+            padding: 0.4rem 0;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .heat-cell {
+            aspect-ratio: 1;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .heat-cell:hover {
+            transform: scale(1.2);
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .heatmap-axis {
+            display: grid;
+            grid-template-columns: 70px repeat(12, 1fr);
+            gap: 2px;
+            margin-top: 0.4rem;
+        }
+
+        .heatmap-axis div {
+            font-size: 0.55rem;
+            color: var(--muted-soft);
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Bottleneck */
+        .bottleneck-card {
+            background: var(--coral-bg);
+            border: 1px solid var(--coral);
+            border-radius: 16px;
+            padding: 1rem 1.1rem;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .bottleneck-card.show {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-start;
+            animation: bottleSlide 0.4s ease-out;
+        }
+
+        @keyframes bottleSlide {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bottleneck-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--coral);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .bottleneck-text { flex: 1; }
+        .bottleneck-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 0.2rem;
+        }
+        .bottleneck-detail {
+            font-size: 0.75rem;
+            color: var(--ink-soft);
+            line-height: 1.4;
+        }
+
+        .sidebar { display: flex; flex-direction: column; gap: 1.25rem; }
+
+        /* Running pulse */
+        .running-pulse {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 0.7rem;
+            color: var(--olive);
+            font-weight: 600;
+        }
+
+        .running-pulse .pulse-dot {
+            width: 6px; height: 6px;
+            background: var(--olive);
+            border-radius: 50%;
+            animation: pulseDot 1s ease-in-out infinite;
+        }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 100px; }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .percentile-grid { grid-template-columns: 1fr 1fr; }
+            .controls-grid { grid-template-columns: 1fr; }
+            .nav-meta .nav-link { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="top-nav">
+        <div class="nav-pill">
+            <div class="brand">
+                <div class="brand-mark">
+                    <div class="brand-bar"></div>
+                    <div class="brand-bar"></div>
+                    <div class="brand-bar"></div>
+                    <div class="brand-bar"></div>
+                    <div class="brand-bar"></div>
+                </div>
+                <span class="brand-name">ConvoStream&nbsp;<em style="color:var(--coral);font-style:normal">Bench</em></span>
+            </div>
+            <div class="nav-meta">
+                <span class="nav-link">Built for GetVocal</span>
+                <span class="nav-link">Observability</span>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-eyebrow"><span class="hero-dot"></span> Benchmark running</div>
+        <h1>Know exactly where your voice agents <em>get slow</em>.</h1>
+        <p class="hero-sub">Concurrent session simulation, P50/P90/P95/P99 distributions, per-provider rankings, and bottleneck detection in real time — production observability for conversational AI.</p>
+    </section>
+
+    <main class="workspace">
+
+        <!-- LEFT -->
+        <div>
+            <div class="percentile-grid">
+                <div class="percentile-cell p50">
+                    <div class="percentile-label">P50</div>
+                    <div class="percentile-value" id="p50val">312<span class="percentile-unit">ms</span></div>
+                    <div class="percentile-delta delta-good" id="p50delta">↓ 18 ms</div>
+                </div>
+                <div class="percentile-cell p90">
+                    <div class="percentile-label">P90</div>
+                    <div class="percentile-value" id="p90val">578<span class="percentile-unit">ms</span></div>
+                    <div class="percentile-delta delta-good" id="p90delta">↓ 24 ms</div>
+                </div>
+                <div class="percentile-cell p95">
+                    <div class="percentile-label">P95</div>
+                    <div class="percentile-value" id="p95val">847<span class="percentile-unit">ms</span></div>
+                    <div class="percentile-delta delta-warn" id="p95delta">↑ 12 ms</div>
+                </div>
+                <div class="percentile-cell p99">
+                    <div class="percentile-label">P99</div>
+                    <div class="percentile-value" id="p99val">1.42<span class="percentile-unit">s</span></div>
+                    <div class="percentile-delta delta-bad" id="p99delta">↑ 89 ms</div>
+                </div>
+            </div>
+
+            <div class="bottleneck-card" id="bottleneckCard">
+                <div class="bottleneck-icon">!</div>
+                <div class="bottleneck-text">
+                    <div class="bottleneck-title">Bottleneck detected: provider tail</div>
+                    <div class="bottleneck-detail" id="bottleneckDetail">P99 latency spike on GPT-4o (+340ms) — likely token throttling. Routing has shed 18% of load to Claude in the last 30s.</div>
+                </div>
+            </div>
+
+            <div class="card card-elevated">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Latency distribution — live</div>
+                        <div class="card-subtitle">Rolling 60s window · all providers</div>
+                    </div>
+                    <div class="running-pulse"><span class="pulse-dot"></span><span id="runState">running</span></div>
+                </div>
+                <div class="chart-wrap">
+                    <div class="chart-legend">
+                        <div class="legend-item"><div class="legend-dot" style="background:var(--olive)"></div>P50</div>
+                        <div class="legend-item"><div class="legend-dot" style="background:var(--olive-soft)"></div>P90</div>
+                        <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div>P95</div>
+                        <div class="legend-item"><div class="legend-dot" style="background:var(--coral)"></div>P99</div>
+                    </div>
+                    <svg class="chart-svg" id="chart" viewBox="0 0 700 280" preserveAspectRatio="none">
+                        <!-- gridlines -->
+                        <g id="grid"></g>
+                        <!-- paths -->
+                        <path id="path-p50" fill="none" stroke="#8B8F4E" stroke-width="2"/>
+                        <path id="path-p90" fill="none" stroke="#A5A968" stroke-width="2"/>
+                        <path id="path-p95" fill="none" stroke="#C9941E" stroke-width="2"/>
+                        <path id="path-p99" fill="none" stroke="#E8826B" stroke-width="2.5"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="card card-elevated" style="margin-top:1.25rem;">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Latency heatmap</div>
+                        <div class="card-subtitle">Per-provider × 12 most recent windows</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="heatmap" id="heatmap"></div>
+                    <div class="heatmap-axis" id="heatAxis">
+                        <div></div>
+                        <div>-60s</div><div>-55</div><div>-50</div><div>-45</div><div>-40</div><div>-35</div>
+                        <div>-30</div><div>-25</div><div>-20</div><div>-15</div><div>-10</div><div>now</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT -->
+        <aside class="sidebar">
+
+            <div class="card card-elevated">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Benchmark config</div>
+                        <div class="card-subtitle">Adjust + re-run</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="controls-grid">
+                        <div class="control-block">
+                            <div class="control-label">Concurrency</div>
+                            <div class="control-value"><span id="concVal">64</span><span style="font-size:0.75rem;color:var(--muted-soft);"> sessions</span></div>
+                            <input class="slider" type="range" min="1" max="256" value="64" id="concSlider">
+                        </div>
+                        <div class="control-block">
+                            <div class="control-label">Duration</div>
+                            <div class="control-value"><span id="durVal">60</span><span style="font-size:0.75rem;color:var(--muted-soft);"> seconds</span></div>
+                            <input class="slider" type="range" min="10" max="300" value="60" id="durSlider">
+                        </div>
+                    </div>
+
+                    <div class="control-label" style="margin-bottom:0.5rem;">Workload type</div>
+                    <div class="workload-tabs">
+                        <button class="workload-tab active" data-wl="chat">Chat</button>
+                        <button class="workload-tab" data-wl="agent">Agent</button>
+                        <button class="workload-tab" data-wl="stream">Streaming</button>
+                        <button class="workload-tab" data-wl="mixed">Mixed</button>
+                    </div>
+
+                    <div class="action-row">
+                        <button class="action-btn primary" id="runBtn" onclick="toggleRun()">▶ Run benchmark</button>
+                        <button class="action-btn spike" onclick="injectSpike()">⚡ Inject spike</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card card-elevated">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Provider leaderboard</div>
+                        <div class="card-subtitle">Ranked by P95</div>
+                    </div>
+                </div>
+                <div class="card-body" id="leaderboard">
+                    <!-- filled by JS -->
+                </div>
+            </div>
+
+        </aside>
+
+    </main>
+
+    <script>
+        const providers = [
+            { id:'mistral', name:'Mistral Large 2', avatar:'MI', model:'mistral-large-2',  base:241, weight:1.0 },
+            { id:'gpt',     name:'GPT-4o',          avatar:'GP', model:'gpt-4o',           base:284, weight:1.0 },
+            { id:'claude',  name:'Claude 3.5',      avatar:'CL', model:'claude-3-5-sonnet', base:329, weight:1.0 },
+            { id:'gemini',  name:'Gemini 1.5 Pro',  avatar:'GE', model:'gemini-1.5-pro',   base:368, weight:1.0 }
+        ];
+
+        let running = true;
+        let workload = 'chat';
+        let concurrency = 64;
+        let duration = 60;
+
+        // history of percentile values
+        const HISTORY_LEN = 50;
+        const history = { p50: [], p90: [], p95: [], p99: [] };
+
+        function seedHistory() {
+            for (let i = 0; i < HISTORY_LEN; i++) {
+                history.p50.push(290 + Math.random() * 50);
+                history.p90.push(540 + Math.random() * 80);
+                history.p95.push(800 + Math.random() * 100);
+                history.p99.push(1300 + Math.random() * 200);
+            }
+        }
+
+        function workloadMult() {
+            return { chat: 1.0, agent: 1.4, stream: 0.85, mixed: 1.15 }[workload];
+        }
+
+        function pushTick() {
+            const m = workloadMult();
+            const concPenalty = 1 + (concurrency - 64) * 0.003;
+            const base = m * concPenalty;
+            history.p50.push(290 * base + (Math.random()-0.5) * 30);
+            history.p90.push(560 * base + (Math.random()-0.5) * 50);
+            history.p95.push(830 * base + (Math.random()-0.5) * 80);
+            history.p99.push(1380 * base + (Math.random()-0.5) * 150);
+            ['p50','p90','p95','p99'].forEach(k => {
+                if (history[k].length > HISTORY_LEN) history[k].shift();
+            });
+        }
+
+        function pathFromSeries(series, minY, maxY) {
+            const W = 700, H = 280, padL = 30, padR = 10, padT = 20, padB = 20;
+            const innerW = W - padL - padR;
+            const innerH = H - padT - padB;
+            const stepX = innerW / (HISTORY_LEN - 1);
+            return series.map((v, i) => {
+                const x = padL + i * stepX;
+                const norm = (v - minY) / (maxY - minY);
+                const y = padT + innerH * (1 - Math.max(0, Math.min(1, norm)));
+                return (i === 0 ? 'M' : 'L') + x.toFixed(1) + ',' + y.toFixed(1);
+            }).join(' ');
+        }
+
+        function renderChart() {
+            const all = [...history.p50, ...history.p90, ...history.p95, ...history.p99];
+            const minY = Math.min(...all) * 0.9;
+            const maxY = Math.max(...all) * 1.05;
+
+            document.getElementById('path-p50').setAttribute('d', pathFromSeries(history.p50, minY, maxY));
+            document.getElementById('path-p90').setAttribute('d', pathFromSeries(history.p90, minY, maxY));
+            document.getElementById('path-p95').setAttribute('d', pathFromSeries(history.p95, minY, maxY));
+            document.getElementById('path-p99').setAttribute('d', pathFromSeries(history.p99, minY, maxY));
+
+            // gridlines
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
+            for (let i = 0; i <= 4; i++) {
+                const y = 20 + (240 / 4) * i;
+                const val = Math.round(maxY - (maxY - minY) * (i / 4));
+                grid.innerHTML += `<line x1="30" y1="${y}" x2="690" y2="${y}" stroke="#E0D9C8" stroke-width="1" stroke-dasharray="3,3"/>`;
+                grid.innerHTML += `<text x="26" y="${y+3}" text-anchor="end" font-size="9" font-family="JetBrains Mono" fill="#9A97A8">${val}</text>`;
+            }
+        }
+
+        function updatePercentileCells() {
+            const cur = {
+                p50: history.p50[history.p50.length-1],
+                p90: history.p90[history.p90.length-1],
+                p95: history.p95[history.p95.length-1],
+                p99: history.p99[history.p99.length-1]
+            };
+            const prev = {
+                p50: history.p50[history.p50.length-2],
+                p90: history.p90[history.p90.length-2],
+                p95: history.p95[history.p95.length-2],
+                p99: history.p99[history.p99.length-2]
+            };
+            document.getElementById('p50val').innerHTML = Math.round(cur.p50) + '<span class="percentile-unit">ms</span>';
+            document.getElementById('p90val').innerHTML = Math.round(cur.p90) + '<span class="percentile-unit">ms</span>';
+            document.getElementById('p95val').innerHTML = Math.round(cur.p95) + '<span class="percentile-unit">ms</span>';
+            document.getElementById('p99val').innerHTML = (cur.p99/1000).toFixed(2) + '<span class="percentile-unit">s</span>';
+
+            applyDelta('p50delta', cur.p50, prev.p50);
+            applyDelta('p90delta', cur.p90, prev.p90);
+            applyDelta('p95delta', cur.p95, prev.p95);
+            applyDelta('p99delta', cur.p99, prev.p99);
+
+            // bottleneck detection
+            if (cur.p99 > 1700) {
+                document.getElementById('bottleneckCard').classList.add('show');
+                const culprit = ['GPT-4o','Claude 3.5','Mistral Large','Gemini 1.5 Pro'][Math.floor(Math.random()*4)];
+                document.getElementById('bottleneckDetail').textContent =
+                    `P99 latency spike on ${culprit} (+${Math.round(cur.p99 - 1380)}ms) — likely token throttling. Shedding ${Math.round(15+Math.random()*10)}% of load to healthier providers.`;
+            } else if (cur.p99 < 1450) {
+                document.getElementById('bottleneckCard').classList.remove('show');
+            }
+        }
+
+        function applyDelta(id, cur, prev) {
+            const diff = cur - prev;
+            const el = document.getElementById(id);
+            el.classList.remove('delta-good','delta-warn','delta-bad');
+            if (diff < -5) { el.classList.add('delta-good'); el.textContent = '↓ ' + Math.round(Math.abs(diff)) + ' ms'; }
+            else if (diff > 20) { el.classList.add('delta-bad'); el.textContent = '↑ ' + Math.round(diff) + ' ms'; }
+            else if (diff > 5) { el.classList.add('delta-warn'); el.textContent = '↑ ' + Math.round(diff) + ' ms'; }
+            else { el.classList.add('delta-good'); el.textContent = '≈ stable'; }
+        }
+
+        function renderLeaderboard() {
+            const m = workloadMult();
+            const ranked = providers.map(p => {
+                const p95 = p.base * m * (1 + (Math.random()-0.5)*0.15) + 400;
+                return { ...p, p95: Math.round(p95) };
+            }).sort((a,b) => a.p95 - b.p95);
+
+            const c = document.getElementById('leaderboard');
+            c.innerHTML = ranked.map((p, i) => `
+                <div class="leader-row ${i===0 ? 'winner' : ''}">
+                    <div class="leader-rank">${i+1}</div>
+                    <div class="leader-avatar ${p.id}">${p.avatar}</div>
+                    <div class="leader-info">
+                        <div class="leader-name">${p.name}</div>
+                        <div class="leader-meta">${p.model}</div>
+                    </div>
+                    <div class="leader-score">${p.p95}<span style="color:var(--muted-soft);font-size:0.65rem;"> ms</span></div>
+                </div>
+            `).join('');
+        }
+
+        function renderHeatmap() {
+            const grid = document.getElementById('heatmap');
+            grid.innerHTML = '';
+            providers.forEach(p => {
+                grid.innerHTML += `<div class="heat-row-label">${p.avatar}</div>`;
+                for (let i = 0; i < 12; i++) {
+                    const intensity = Math.random();
+                    // map to coral-to-olive scale
+                    let bg;
+                    if (intensity < 0.3) bg = `rgba(139, 143, 78, ${0.3 + intensity})`;       // olive
+                    else if (intensity < 0.6) bg = `rgba(165, 169, 104, ${0.4 + intensity*0.5})`; // light olive
+                    else if (intensity < 0.85) bg = `rgba(201, 148, 30, ${0.5 + intensity*0.4})`; // amber
+                    else bg = `rgba(232, 130, 107, ${0.7 + intensity*0.3})`;                  // coral
+                    grid.innerHTML += `<div class="heat-cell" style="background:${bg}" title="${p.name} · ${Math.round(200+intensity*1200)}ms"></div>`;
+                }
+            });
+        }
+
+        function toggleRun() {
+            running = !running;
+            document.getElementById('runBtn').textContent = running ? '⏸ Pause benchmark' : '▶ Run benchmark';
+            document.getElementById('runState').textContent = running ? 'running' : 'paused';
+        }
+
+        function injectSpike() {
+            // force a spike in the next few ticks
+            history.p99[history.p99.length-1] += 600;
+            history.p95[history.p95.length-1] += 280;
+            history.p90[history.p90.length-1] += 120;
+            renderChart();
+            updatePercentileCells();
+            renderHeatmap();
+        }
+
+        // wire controls
+        document.getElementById('concSlider').addEventListener('input', e => {
+            concurrency = parseInt(e.target.value);
+            document.getElementById('concVal').textContent = concurrency;
+        });
+        document.getElementById('durSlider').addEventListener('input', e => {
+            duration = parseInt(e.target.value);
+            document.getElementById('durVal').textContent = duration;
+        });
+        document.querySelectorAll('.workload-tab').forEach(t => {
+            t.addEventListener('click', () => {
+                document.querySelectorAll('.workload-tab').forEach(x => x.classList.remove('active'));
+                t.classList.add('active');
+                workload = t.dataset.wl;
+                renderLeaderboard();
+            });
+        });
+
+        // init
+        seedHistory();
+        renderChart();
+        updatePercentileCells();
+        renderLeaderboard();
+        renderHeatmap();
+
+        // tick
+        setInterval(() => {
+            if (!running) return;
+            pushTick();
+            renderChart();
+            updatePercentileCells();
+        }, 1500);
+
+        // refresh heatmap + leaderboard periodically
+        setInterval(() => {
+            if (running) {
+                renderHeatmap();
+                renderLeaderboard();
+            }
+        }, 4000);
+    </script>
+</body>
+</html>
